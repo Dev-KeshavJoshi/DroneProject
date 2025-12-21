@@ -180,10 +180,3 @@ TextureImporter:
   userData: texture_processed_v01
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 145808
-  packageName: Terrain Sample Asset Pack
-  packageVersion: 2.0.1
-  assetPath: Assets/TerrainSampleAssets/Textures/Details/GrassDry_MaskMap.tif
-  uploadId: 511657
