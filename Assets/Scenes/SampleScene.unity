@@ -763,11 +763,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52bc37360e1703f4bba324ba7606ef5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DroneControllerFull
-  throttleForce: 15
-  moveForce: 10
-  yawForce: 5
-  tiltSpeed: 8
-  maxTiltAngle: 30
+  throttleForce: 30
+  moveForce: 20
+  yawForce: 8
+  tiltSpeed: 12
+  maxTiltAngle: 45
   stabilizationSpeed: 2
 --- !u!4 &890181576 stripped
 Transform:
