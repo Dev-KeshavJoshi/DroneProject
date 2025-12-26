@@ -283,7 +283,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69969316}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.24291213, y: 0.17048226, z: -0.04341072, w: 0.9539628}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1788,6 +1788,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 2300004, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300004, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 15be70cfdf9af6042b31be0b5cc09137, type: 2}
+    - target: {fileID: 2300008, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 15be70cfdf9af6042b31be0b5cc09137, type: 2}
+    - target: {fileID: 2300010, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 15be70cfdf9af6042b31be0b5cc09137, type: 2}
+    - target: {fileID: 2300012, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 15be70cfdf9af6042b31be0b5cc09137, type: 2}
+    - target: {fileID: 2300014, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 15be70cfdf9af6042b31be0b5cc09137, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 100002, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
@@ -1825,9 +1849,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3569a896ed517cf4cb27d83b3e4d661d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropellerRotate
-  speed: 2000
-  invert: 0
   rotationAxis: {x: 0, y: 0, z: 1}
+  invert: 0
+  idleSpeed: 300
+  maxSpeed: 2500
+  throttle: 0
 --- !u!1 &1411925702
 GameObject:
   m_ObjectHideFlags: 3
@@ -2465,9 +2491,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3569a896ed517cf4cb27d83b3e4d661d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropellerRotate
-  speed: 2000
-  invert: 1
   rotationAxis: {x: 0, y: 0, z: 1}
+  invert: 0
+  idleSpeed: 300
+  maxSpeed: 2500
+  throttle: 0
 --- !u!1 &2066595168 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100010, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
@@ -2485,9 +2513,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3569a896ed517cf4cb27d83b3e4d661d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropellerRotate
-  speed: 2000
-  invert: 0
   rotationAxis: {x: 0, y: 0, z: 1}
+  invert: 0
+  idleSpeed: 300
+  maxSpeed: 2500
+  throttle: 0
 --- !u!1 &2104719592 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100016, guid: 199c8c7eb08c3e34cbdc1493fe811a8a, type: 3}
@@ -2505,9 +2535,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3569a896ed517cf4cb27d83b3e4d661d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropellerRotate
-  speed: 2000
-  invert: 0
   rotationAxis: {x: 0, y: 0, z: 1}
+  invert: 0
+  idleSpeed: 300
+  maxSpeed: 2500
+  throttle: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
