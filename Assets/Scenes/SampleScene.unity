@@ -932,9 +932,20 @@ MonoBehaviour:
   throttleForce: 30
   moveForce: 20
   yawForce: 8
+<<<<<<< HEAD
   tiltSpeed: 12
   maxTiltAngle: 45
   stabilizationSpeed: 2
+=======
+  tiltSpeed: 7
+  maxTiltAngle: 30
+  stabilizationSpeed: 1
+--- !u!4 &890181576 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6666647001093093517, guid: 3bd6637ef6efedd4792f1be966bbab59, type: 3}
+  m_PrefabInstance: {fileID: 124109193}
+  m_PrefabAsset: {fileID: 0}
+>>>>>>> cddda819878325a9b676cf99494a55001d0f2a10
 --- !u!114 &890181583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -975,7 +986,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3908d4c83ffd58746b91d86f7a049c6b, type: 2}
+  - {fileID: 2100000, guid: cc64df549bc6b7d438eaf9b5d8dc7fe7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1403,7 +1414,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1620f95310b2f4844b032a918a2825b1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
