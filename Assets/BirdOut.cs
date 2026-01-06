@@ -21,12 +21,14 @@ public class BirdOut : MonoBehaviour
         {
             moveOut = true;
             moveIn = false;
+            gameObject.SetActive(true);
         }
 
         if (Input.GetKeyDown(KeyCode.J))
         {
             moveIn = true;
             moveOut = false;
+            gameObject.SetActive(false);
         }
 
         // ----- MOVE OUT -----
