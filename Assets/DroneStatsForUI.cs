@@ -19,8 +19,10 @@ public class DroneStatsForUI : MonoBehaviour
     private float droneSpeedKmph;
     private float droneAltitude;
     private const float KMPH_CONVERSION_NUM = 3.6f;
-    private const float MAX_ALTITUDE_IN_METER = 100f;
+    private const float MAX_ALTITUDE_IN_METER = 1000f;
     //private const float GROUND_LEVEL = 35f; //For 1st method of finding altitude.
+    private Vector3 altitudeRayOrigin;
+    private Vector3 raycastDirection;
 
     private void Update()
     {
@@ -29,11 +31,14 @@ public class DroneStatsForUI : MonoBehaviour
         //droneAltitude = droneRigidBody.transform.position.y - GROUND_LEVEL; 
 
         //2nd method of finding altitude.
-        if (Physics.Raycast(droneRigidBody.transform.position, Vector3.down, 
+        altitudeRayOrigin = droneRigidBody.transform.position - Vector3.up * 0.6f;
+        raycastDirection = (Vector3.down + transform.forward * 0.2f).normalized;
+        if (Physics.Raycast(altitudeRayOrigin, raycastDirection, 
             out RaycastHit hit, MAX_ALTITUDE_IN_METER, groundLayer))
         {
             droneAltitude = hit.distance;
         }
+        Debug.DrawRay(altitudeRayOrigin, raycastDirection * MAX_ALTITUDE_IN_METER, Color.red);
 
         speedValue.text = Mathf.RoundToInt(droneSpeedKmph) + " Km/h";
         altitudeText.text = Mathf.RoundToInt(droneAltitude) + " m";
