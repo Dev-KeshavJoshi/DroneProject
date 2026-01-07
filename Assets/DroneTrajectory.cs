@@ -8,13 +8,13 @@ public class DroneTrajectory : MonoBehaviour
 
     LineRenderer line;
 
-    void Awake()
+    private void Awake()
     {
         line = GetComponent<LineRenderer>();
         line.positionCount = pointCount;
     }
 
-    void Update()
+    private void Update()
     {
         Vector3 startPos = transform.position;
         Vector3 dir = transform.forward;

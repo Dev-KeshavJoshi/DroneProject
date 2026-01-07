@@ -5,12 +5,12 @@ public class ProperDroneAnimation : MonoBehaviour
     [SerializeField] private Transform[] props;
     [SerializeField] private float propSpeed = 1500f;
 
-    void Update()
+    private void Update()
     {
         RotateProps();
     }
 
-    void RotateProps()
+    private void RotateProps()
     {
         foreach (Transform prop in props)
         {

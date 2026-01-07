@@ -13,17 +13,17 @@ public class DroneControllerFull : MonoBehaviour
     public float maxTiltAngle = 30f;
     public float stabilizationSpeed = 2f;
 
-    Rigidbody rb;
+    private Rigidbody rigidBody;
 
-    void Start()
+    private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.useGravity = false;
-        rb.linearDamping = 1.5f;
-        rb.angularDamping = 2f;
+        rigidBody = GetComponent<Rigidbody>();
+        rigidBody.useGravity = false;
+        rigidBody.linearDamping = 1.5f;
+        rigidBody.angularDamping = 2f;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         HandleThrottle();
         HandleMovement();
@@ -32,17 +32,17 @@ public class DroneControllerFull : MonoBehaviour
     }
 
     // ---------------- THROTTLE ----------------
-    void HandleThrottle()
+    private void HandleThrottle()
     {
         if (Input.GetKey(KeyCode.Space))
-            rb.AddForce(Vector3.up * throttleForce, ForceMode.Force);
+            rigidBody.AddForce(Vector3.up * throttleForce, ForceMode.Force);
 
         if (Input.GetKey(KeyCode.LeftControl))
-            rb.AddForce(Vector3.down * throttleForce, ForceMode.Force);
+            rigidBody.AddForce(Vector3.down * throttleForce, ForceMode.Force);
     }
 
     // ---------------- PITCH & ROLL ----------------
-    void HandleMovement()
+    private void HandleMovement()
     {
         float pitchInput = 0f;
         float rollInput = 0f;
@@ -62,30 +62,30 @@ public class DroneControllerFull : MonoBehaviour
             -targetRoll
         );
 
-        rb.MoveRotation(
-            Quaternion.Slerp(rb.rotation, targetRotation, tiltSpeed * Time.fixedDeltaTime)
+        rigidBody.MoveRotation(
+            Quaternion.Slerp(rigidBody.rotation, targetRotation, tiltSpeed * Time.fixedDeltaTime)
         );
 
         Vector3 movementForce =
             transform.forward * pitchInput * moveForce +
             transform.right * rollInput * moveForce;
 
-        rb.AddForce(movementForce, ForceMode.Force);
+        rigidBody.AddForce(movementForce, ForceMode.Force);
     }
 
     // ---------------- YAW ----------------
-    void HandleYaw()
+    private void HandleYaw()
     {
         float yawInput = 0f;
 
         if (Input.GetKey(KeyCode.Q)) yawInput = -1f;
         if (Input.GetKey(KeyCode.E)) yawInput = 1f;
 
-        rb.AddTorque(Vector3.up * yawInput * yawForce, ForceMode.Force);
+        rigidBody.AddTorque(Vector3.up * yawInput * yawForce, ForceMode.Force);
     }
 
     // ---------------- AUTO STABILIZATION ----------------
-    void StabilizeDrone()
+    private void StabilizeDrone()
     {
         Vector3 rot = transform.localEulerAngles;
         rot.x = NormalizeAngle(rot.x);
@@ -97,11 +97,11 @@ public class DroneControllerFull : MonoBehaviour
             -rot.z * stabilizationSpeed
         );
 
-        rb.AddRelativeTorque(stabilizeTorque, ForceMode.Force);
+        rigidBody.AddRelativeTorque(stabilizeTorque, ForceMode.Force);
     }
 
     // ---------------- HELPER ----------------
-    float NormalizeAngle(float angle)
+    private float NormalizeAngle(float angle)
     {
         if (angle > 180f)
             angle -= 360f;
