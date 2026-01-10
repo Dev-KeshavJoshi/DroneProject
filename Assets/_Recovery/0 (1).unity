@@ -2322,7 +2322,7 @@ MonoBehaviour:
   speedValue: {fileID: 1789889030}
   altitudeText: {fileID: 1105917661}
   subtitleText: {fileID: 361565351}
-  checkpoint1_2Mesh: {fileID: 0}
+  checkpoint1_2Mesh: {fileID: 1265847275}
 --- !u!1001 &1315457234
 PrefabInstance:
   m_ObjectHideFlags: 0
