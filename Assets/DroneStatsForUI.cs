@@ -1,5 +1,6 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
+using System.Collections.Generic;
 
 public class DroneStatsForUI : MonoBehaviour
 {
@@ -17,46 +18,41 @@ public class DroneStatsForUI : MonoBehaviour
     [Header("Subtitle UI")]
     [SerializeField] private TextMeshProUGUI subtitleText;
 
-    [Header("Next Checkpoint")]
+    [Header("Checkpoint 1.1")]
+    [Tooltip("Mesh that appears after 1.1 completion (start of 1.2)")]
     [SerializeField] private GameObject checkpoint1_2Mesh;
+
+    [Header("Checkpoint 1.2 Visuals")]
+    [SerializeField] private GameObject rollArrow;
+    [SerializeField] private GameObject pitchArrow;
+    [SerializeField] private GameObject yawArrow;
+    [SerializeField] private GameObject forceVectorDiagram;
+    [SerializeField] private TextMeshProUGUI angleText; // Assign a UI Text to show angles
 
     // ================== CONSTANTS ==================
     private const float KMPH_CONVERSION = 3.6f;
     private const float MAX_RAY_DISTANCE = 1000f;
     private const float ALTITUDE_OFFSET = 4f;
 
-    private const float NEWTON_TRIGGER_ALTITUDE = 5f;
-    private const float NEWTON_TOLERANCE = 0.6f;
-
-    private const float TARGET_ALTITUDE = 15f;
-    private const float ALTITUDE_TOLERANCE = 1.2f;
-    private const float HOLD_DURATION = 5f;
-
-    // ================== STATE ==================
-    private enum CheckpointState
-    {
-        Inactive,
-        Holding,
-        Completed
-    }
-
-    private CheckpointState checkpointState = CheckpointState.Inactive;
-
     // ================== RUNTIME ==================
     private float droneSpeed;
     private float droneAltitude;
-    private float holdTimer;
-    private float instabilityTimer;
 
-    private bool newtonLawShown = false;
+    // Checkpoint System
+    private List<ICheckpoint> _checkpoints;
+    private int _currentCheckpointIndex = -1;
+    private ICheckpoint _currentCheckpoint;
 
     // ================== UNITY ==================
     private void Start()
     {
-        subtitleText.gameObject.SetActive(false);
+        InitializeCheckpoints();
 
-        if (checkpoint1_2Mesh != null)
-            checkpoint1_2Mesh.SetActive(false);
+        // Start first checkpoint
+        if (_checkpoints.Count > 0)
+        {
+            SetCheckpoint(0);
+        }
     }
 
     private void Update()
@@ -64,19 +60,89 @@ public class DroneStatsForUI : MonoBehaviour
         UpdateSpeed();
         UpdateAltitude();
         UpdateUI();
-        HandleNewtonThirdLaw();
-        HandleCheckpoint();
+
+        if (_currentCheckpoint != null)
+        {
+            _currentCheckpoint.UpdateCheckpoint();
+
+            if (_currentCheckpoint.IsCompleted)
+            {
+                AdvanceCheckpoint();
+            }
+        }
     }
 
-    // ================== SPEED ==================
+    private void InitializeCheckpoints()
+    {
+        _checkpoints = new List<ICheckpoint>();
+
+        // Checkpoint 1.1
+        _checkpoints.Add(new Checkpoint1_1(
+            this,
+            droneRigidBody,
+            subtitleText,
+            groundLayer,
+            checkpoint1_2Mesh
+        ));
+
+        // Checkpoint 1.2
+        _checkpoints.Add(new Checkpoint1_2(
+            this,
+            droneRigidBody,
+            subtitleText,
+            rollArrow,
+            pitchArrow,
+            yawArrow,
+            forceVectorDiagram,
+            angleText
+        ));
+    }
+
+    private void SetCheckpoint(int index)
+    {
+        if (index < 0 || index >= _checkpoints.Count) return;
+
+        if (_currentCheckpoint != null)
+        {
+            _currentCheckpoint.Exit();
+        }
+
+        _currentCheckpointIndex = index;
+        _currentCheckpoint = _checkpoints[index];
+        _currentCheckpoint.Enter();
+        
+        Debug.Log($"Started Checkpoint {_currentCheckpointIndex + 1}");
+    }
+
+    private void AdvanceCheckpoint()
+    {
+        int nextIndex = _currentCheckpointIndex + 1;
+        if (nextIndex < _checkpoints.Count)
+        {
+            SetCheckpoint(nextIndex);
+        }
+        else
+        {
+            // All completed
+            _currentCheckpoint.Exit();
+            _currentCheckpoint = null;
+            subtitleText.text = "All Checkpoints Completed!";
+            Debug.Log("All Checkpoints Completed");
+        }
+    }
+
+
+    // ================== SHARED LOGIC ==================
     private void UpdateSpeed()
     {
-        droneSpeed = droneRigidBody.linearVelocity.magnitude * KMPH_CONVERSION;
+        if (droneRigidBody != null)
+            droneSpeed = droneRigidBody.linearVelocity.magnitude * KMPH_CONVERSION;
     }
 
-    // ================== ALTITUDE ==================
     private void UpdateAltitude()
     {
+        // Simple visual update for main UI, checkpoints do their own precise logic if needed,
+        // or we could expose this. For now keeping it essentially same as before for main UI.
         Vector3 rayOrigin = droneRigidBody.transform.position + Vector3.up * 0.1f;
 
         if (Physics.Raycast(rayOrigin, Vector3.down,
@@ -84,101 +150,11 @@ public class DroneStatsForUI : MonoBehaviour
         {
             droneAltitude = Mathf.Max(0f, hit.distance - ALTITUDE_OFFSET);
         }
-
-        Debug.DrawRay(rayOrigin, Vector3.down * MAX_RAY_DISTANCE, Color.red);
     }
 
-    // ================== UI ==================
     private void UpdateUI()
     {
-        speedValue.text = Mathf.RoundToInt(droneSpeed) + " Km/h";
-        altitudeText.text = Mathf.RoundToInt(droneAltitude) + " m";
-    }
-
-    // ================== NEWTON'S 3RD LAW ==================
-    private void HandleNewtonThirdLaw()
-    {
-        if (newtonLawShown)
-            return;
-
-        if (Mathf.Abs(droneAltitude - NEWTON_TRIGGER_ALTITUDE) <= NEWTON_TOLERANCE)
-        {
-            newtonLawShown = true;
-
-            subtitleText.gameObject.SetActive(true);
-            subtitleText.text =
-                "⬇ Thrust Force\n\n" +
-                "Newton's 3rd Law:\n" +
-                "Every action has an equal\n" +
-                "and opposite reaction";
-
-            Invoke(nameof(HideNewtonText), 4f);
-        }
-    }
-
-    private void HideNewtonText()
-    {
-        if (checkpointState == CheckpointState.Inactive)
-            subtitleText.gameObject.SetActive(false);
-    }
-
-    // ================== CHECKPOINT 1.1 ==================
-    private void HandleCheckpoint()
-    {
-        if (checkpointState == CheckpointState.Completed)
-            return;
-
-        bool altitudeStable =
-            Mathf.Abs(droneAltitude - TARGET_ALTITUDE) <= ALTITUDE_TOLERANCE;
-
-        Vector3 vel = droneRigidBody.linearVelocity;
-
-        bool velocityStable =
-            Mathf.Abs(vel.y) < 0.8f &&
-            new Vector2(vel.x, vel.z).magnitude < 1.2f;
-
-        // ---------- ENTER HOLD ----------
-        if (checkpointState == CheckpointState.Inactive && altitudeStable)
-        {
-            checkpointState = CheckpointState.Holding;
-            holdTimer = 0f;
-            instabilityTimer = 0f;
-
-            subtitleText.gameObject.SetActive(true);
-            subtitleText.text = "Hold position";
-        }
-
-        if (checkpointState != CheckpointState.Holding)
-            return;
-
-        // ---------- UNSTABLE ----------
-        if (!altitudeStable || !velocityStable)
-        {
-            instabilityTimer += Time.deltaTime;
-
-            if (instabilityTimer > 1.2f)
-            {
-                holdTimer = Mathf.Max(0f, holdTimer - Time.deltaTime * 2f);
-                subtitleText.text = "Stabilize...";
-            }
-            return;
-        }
-
-        // ---------- STABLE ----------
-        instabilityTimer = 0f;
-        holdTimer += Time.deltaTime;
-
-        subtitleText.text =
-            $"Hold for {Mathf.CeilToInt(HOLD_DURATION - holdTimer)} seconds";
-
-        // ---------- COMPLETE ----------
-        if (holdTimer >= HOLD_DURATION)
-        {
-            checkpointState = CheckpointState.Completed;
-            subtitleText.text = "Checkpoint 1.1 Completed";
-
-            if (checkpoint1_2Mesh != null)
-                checkpoint1_2Mesh.SetActive(true);
-        }
+        if (speedValue) speedValue.text = Mathf.RoundToInt(droneSpeed) + " Km/h";
+        if (altitudeText) altitudeText.text = Mathf.RoundToInt(droneAltitude) + " m";
     }
 }
