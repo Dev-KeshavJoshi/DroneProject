@@ -15,12 +15,9 @@ public class DroneStatsForUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speedValue;
     [SerializeField] private TextMeshProUGUI altitudeText;
 
-    [Header("Subtitle UI")]
+    [Header("Helper UI")]
     [SerializeField] private TextMeshProUGUI subtitleText;
-
-    [Header("Checkpoint 1.1")]
-    [Tooltip("Mesh that appears after 1.1 completion (start of 1.2)")]
-    [SerializeField] private GameObject checkpoint1_2Mesh;
+    [SerializeField] private TextMeshProUGUI tutorialText;
 
     [Header("Checkpoint 1.2 Visuals")]
     [SerializeField] private GameObject rollArrow;
@@ -32,7 +29,7 @@ public class DroneStatsForUI : MonoBehaviour
     // ================== CONSTANTS ==================
     private const float KMPH_CONVERSION = 3.6f;
     private const float MAX_RAY_DISTANCE = 1000f;
-    private const float ALTITUDE_OFFSET = 4f;
+    private const float ALTITUDE_OFFSET = 0.2f;
 
     // ================== RUNTIME ==================
     private float droneSpeed;
@@ -81,8 +78,8 @@ public class DroneStatsForUI : MonoBehaviour
             this,
             droneRigidBody,
             subtitleText,
-            groundLayer,
-            checkpoint1_2Mesh
+            tutorialText,
+            groundLayer
         ));
 
         // Checkpoint 1.2
@@ -90,6 +87,7 @@ public class DroneStatsForUI : MonoBehaviour
             this,
             droneRigidBody,
             subtitleText,
+            tutorialText,
             rollArrow,
             pitchArrow,
             yawArrow,
@@ -126,7 +124,7 @@ public class DroneStatsForUI : MonoBehaviour
             // All completed
             _currentCheckpoint.Exit();
             _currentCheckpoint = null;
-            subtitleText.text = "All Checkpoints Completed!";
+            tutorialText.text = "All Checkpoints Completed!";
             Debug.Log("All Checkpoints Completed");
         }
     }
@@ -143,12 +141,13 @@ public class DroneStatsForUI : MonoBehaviour
     {
         // Simple visual update for main UI, checkpoints do their own precise logic if needed,
         // or we could expose this. For now keeping it essentially same as before for main UI.
-        Vector3 rayOrigin = droneRigidBody.transform.position + Vector3.up * 0.1f;
+        Vector3 rayOrigin = droneRigidBody.transform.position - (Vector3.up * ALTITUDE_OFFSET);
 
         if (Physics.Raycast(rayOrigin, Vector3.down,
             out RaycastHit hit, MAX_RAY_DISTANCE, groundLayer))
         {
-            droneAltitude = Mathf.Max(0f, hit.distance - ALTITUDE_OFFSET);
+            droneAltitude = Mathf.Max(0f, hit.distance);
+            Debug.DrawRay(rayOrigin, Vector3.down, Color.red); // Ray for visualization.
         }
     }
 

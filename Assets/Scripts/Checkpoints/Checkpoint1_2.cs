@@ -1,11 +1,13 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class Checkpoint1_2 : ICheckpoint
 {
     private readonly MonoBehaviour _context;
     private readonly Rigidbody _droneRigidBody;
     private readonly TextMeshProUGUI _subtitleText;
+    private readonly TextMeshProUGUI _tutorialText;
 
     // Visuals
     private readonly GameObject _rollArrow;
@@ -25,6 +27,7 @@ public class Checkpoint1_2 : ICheckpoint
         MonoBehaviour context,
         Rigidbody droneRigidBody,
         TextMeshProUGUI subtitleText,
+        TextMeshProUGUI tutorialText,
         GameObject rollArrow,
         GameObject pitchArrow,
         GameObject yawArrow,
@@ -34,6 +37,7 @@ public class Checkpoint1_2 : ICheckpoint
         _context = context;
         _droneRigidBody = droneRigidBody;
         _subtitleText = subtitleText;
+        _tutorialText = tutorialText;
         _rollArrow = rollArrow;
         _pitchArrow = pitchArrow;
         _yawArrow = yawArrow;
@@ -50,6 +54,8 @@ public class Checkpoint1_2 : ICheckpoint
         
         _subtitleText.gameObject.SetActive(true);
         _subtitleText.text = "Checkpoint 1.2: Axis Control\nPerform Roll, Pitch, and Yaw movements.";
+
+        _context.StartCoroutine(HideSubtitleText(4f));
 
         SetVisualsActive(false);
         if (_forceVectorDiagram) _forceVectorDiagram.SetActive(true);
@@ -137,7 +143,7 @@ public class Checkpoint1_2 : ICheckpoint
         // We could verify via "demonstration logic" - e.g. "Good Roll!", "Good Pitch!" etc.
         // For now, we accumulate completion.
         
-        UpdateProgressText();
+        //UpdateProgressText(); // Update whenever an axis movement is completed.
     }
 
     private void UpdateProgressText()
@@ -146,7 +152,7 @@ public class Checkpoint1_2 : ICheckpoint
         msg += _completedRoll ? "[X] Roll " : "[ ] Roll ";
         msg += _completedPitch ? "[X] Pitch " : "[ ] Pitch ";
         msg += _completedYaw ? "[X] Yaw" : "[ ] Yaw";
-        _subtitleText.text = msg;
+        _tutorialText.text = msg;
     }
 
     private void UpdateUI()
@@ -167,6 +173,12 @@ public class Checkpoint1_2 : ICheckpoint
            // _forceVectorDiagram.transform.rotation = _droneRigidBody.rotation; 
            // (might be too complex for 2D UI without knowing structure).
         }
+    }
+
+    private IEnumerator HideSubtitleText(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _subtitleText.gameObject.SetActive(false);
     }
 
     private float NormalizeAngle(float angle)
