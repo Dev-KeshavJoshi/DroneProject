@@ -48,7 +48,7 @@ public class DroneControllerFull : MonoBehaviour
         float rollInput = 0f;
 
         if (Input.GetKey(KeyCode.W)) pitchInput = 1f;
-        if (Input.GetKey(KeyCode.S)) pitchInput = -1f;
+
 
         if (Input.GetKey(KeyCode.A)) rollInput = -1f;
         if (Input.GetKey(KeyCode.D)) rollInput = 1f;
