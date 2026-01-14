@@ -94,6 +94,15 @@ public class DroneStatsForUI : MonoBehaviour
             forceVectorDiagram,
             angleText
         ));
+
+        // Checkpoint 1.3
+        _checkpoints.Add(new Checkpoint1_3(
+            this,
+            droneRigidBody,
+            subtitleText,
+            tutorialText,
+            speedValue
+        ));
     }
 
     private void SetCheckpoint(int index)
