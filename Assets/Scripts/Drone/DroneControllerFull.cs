@@ -1,44 +1,126 @@
 using UnityEngine;
+using System.Collections;
+using System;
 
 [RequireComponent(typeof(Rigidbody))]
 public class DroneControllerFull : MonoBehaviour
 {
+    [Header("Throttle Settings")]
+    [SerializeField] private float maxThrottleForce = 20f;
+    [SerializeField] private float throttleRampSpeed = 0.5f;
+    [SerializeField] private float spoolDownSpeed = 0.5f;
+    [SerializeField] private float throttleDelay = 3f;
+    [SerializeField] private float hoveringDelay = 1f;
+
     [Header("Forces")]
-    public float throttleForce = 15f;
-    public float moveForce = 10f;
-    public float yawForce = 5f;
+    [SerializeField] private float moveForce = 10f;
+    [SerializeField] private float yawForce = 5f;
 
     [Header("Rotation")]
-    public float tiltSpeed = 8f;
-    public float maxTiltAngle = 30f;
-    public float stabilizationSpeed = 2f;
+    [SerializeField] private float tiltSpeed = 8f;
+    [SerializeField] private float maxTiltAngle = 30f;
+    [SerializeField] private float stabilizationSpeed = 2f;
+    
+    // Runtime
+    public float CurrentThrottle { get; private set; }
+    public float HoveringThrottle { get; private set; }
 
+    private float hoverForce;
+    private bool isHovering = false;
+    private bool isThrottleAllowed = false;
+    private Coroutine throttleCoroutine;
+    private Coroutine hoveringCoroutine;
     private Rigidbody rigidBody;
 
-    private void Start()
+    private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        rigidBody.useGravity = false;
         rigidBody.linearDamping = 1.5f;
         rigidBody.angularDamping = 2f;
     }
 
+    private void Start()
+    {
+        hoverForce = rigidBody.mass * Physics.gravity.magnitude;
+    }
+
+    private void Update()
+    {
+        HandleThrottleInput();
+        HandleHoveringInput();
+    }
+
     private void FixedUpdate()
     {
-        HandleThrottle();
+        ApplyThrottle();
+        ApplyHovering();
+
         HandleMovement();
         HandleYaw();
         StabilizeDrone();
     }
 
     // ---------------- THROTTLE ----------------
-    private void HandleThrottle()
+    private void ApplyThrottle()
     {
-        if (Input.GetKey(KeyCode.Space))
-            rigidBody.AddForce(Vector3.up * throttleForce, ForceMode.Force);
+        if (!isThrottleAllowed) return;
 
-        if (Input.GetKey(KeyCode.LeftControl))
-            rigidBody.AddForce(Vector3.down * throttleForce, ForceMode.Force);
+        rigidBody.AddForce(Vector3.up * (CurrentThrottle * maxThrottleForce), ForceMode.Force);
+    }
+
+    private void ApplyHovering()
+    {
+        if (!isHovering) return;
+
+        rigidBody.AddForce(Vector3.up * hoverForce, ForceMode.Force);
+    }
+
+    private void HandleThrottleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (throttleCoroutine == null)
+                throttleCoroutine = InvokeAfterDelay(() => isThrottleAllowed = true, throttleDelay);
+        }
+
+        if (Input.GetKey(KeyCode.Space) && isThrottleAllowed)
+        {
+            CurrentThrottle = Mathf.MoveTowards(
+                CurrentThrottle,
+                1f,
+                throttleRampSpeed * Time.deltaTime
+            );
+        }
+        else
+        {
+            // Throttle decay when released
+            CurrentThrottle = Mathf.MoveTowards(
+                CurrentThrottle,
+                0f,
+                spoolDownSpeed * Time.deltaTime
+            );
+        }
+    }
+
+    private void HandleHoveringInput()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            if (hoveringCoroutine == null)
+                hoveringCoroutine = InvokeAfterDelay(() =>
+                {
+                    isHovering = true;
+                    HoveringThrottle = 0.65f;
+                }
+                , hoveringDelay);
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift) && isHovering)
+        {
+            isHovering = false;
+            hoveringCoroutine = null;
+            HoveringThrottle = 0;
+        }
     }
 
     // ---------------- PITCH & ROLL ----------------
@@ -106,5 +188,22 @@ public class DroneControllerFull : MonoBehaviour
         if (angle > 180f)
             angle -= 360f;
         return angle;
+    }
+
+    public bool GetIsHovering()
+    {
+        return isHovering;
+    }
+
+    private Coroutine InvokeAfterDelay(Action action, float delay)
+    {
+        Coroutine coroutine = StartCoroutine(InvokeRoutine(action, delay));
+        return coroutine; 
+    }
+
+    private IEnumerator InvokeRoutine(Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
     }
 }

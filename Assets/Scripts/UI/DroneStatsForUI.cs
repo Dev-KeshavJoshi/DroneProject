@@ -5,13 +5,15 @@ using System.Collections.Generic;
 public class DroneStatsForUI : MonoBehaviour
 {
     // ================== INSPECTOR ==================
-    [Header("Terrain")]
+    [Header("Reference")]
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private DroneControllerFull droneControllerFull;
 
     [Header("Drone")]
     [SerializeField] private Rigidbody droneRigidBody;
 
     [Header("DroneStats UI")]
+    [SerializeField] private GameObject speedUI;
     [SerializeField] private TextMeshProUGUI speedValue;
     [SerializeField] private TextMeshProUGUI altitudeText;
 
@@ -57,6 +59,8 @@ public class DroneStatsForUI : MonoBehaviour
         UpdateSpeed();
         UpdateAltitude();
         UpdateUI();
+
+        ShowHideSpeedUI(!droneControllerFull.GetIsHovering());
 
         if (_currentCheckpoint != null)
         {
@@ -142,8 +146,15 @@ public class DroneStatsForUI : MonoBehaviour
     // ================== SHARED LOGIC ==================
     private void UpdateSpeed()
     {
-        if (droneRigidBody != null)
-            droneSpeed = droneRigidBody.linearVelocity.magnitude * KMPH_CONVERSION;
+        if (droneRigidBody == null) return;
+
+        // Ignore vertical movement
+        Vector2 horizontalVelocity = new Vector2(
+            droneRigidBody.linearVelocity.x, 
+            droneRigidBody.linearVelocity.z
+        );
+
+        droneSpeed = horizontalVelocity.magnitude * KMPH_CONVERSION;
     }
 
     private void UpdateAltitude()
@@ -164,5 +175,10 @@ public class DroneStatsForUI : MonoBehaviour
     {
         if (speedValue) speedValue.text = Mathf.RoundToInt(droneSpeed) + " Km/h";
         if (altitudeText) altitudeText.text = Mathf.RoundToInt(droneAltitude) + " m";
+    }
+
+    private void ShowHideSpeedUI(bool isVisible)
+    {
+        speedUI.gameObject.SetActive(isVisible);
     }
 }

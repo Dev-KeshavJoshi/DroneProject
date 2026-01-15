@@ -2,23 +2,57 @@ using UnityEngine;
 
 public class DroneAnimationHandler : MonoBehaviour
 {
-    [SerializeField] private Transform[] props;
-    [SerializeField] private float propSpeed = 1500f;
+    [Header("Propellers")]
+    [SerializeField] private Transform Prop_FrontLeft;
+    [SerializeField] private Transform Prop_FrontRight;
+    [SerializeField] private Transform Prop_BackLeft;
+    [SerializeField] private Transform Prop_BackRight;
+
+    [Header("Spin Settings")]
+    [SerializeField] private float maxRPM = 3500f;
+    [SerializeField] private float spinSmoothness = 3f;
+
+    private float currentRPM;
+    private Transform[] Propellers;
+    private DroneControllerFull droneControllerFull;
+
+    private void Awake()
+    {
+        Propellers = new Transform[] { Prop_FrontLeft, Prop_FrontRight, Prop_BackLeft, Prop_BackRight };
+        droneControllerFull = GetComponent<DroneControllerFull>();
+    }
 
     private void Update()
     {
-        RotateProps();
+        RotatePropellers();
     }
 
-    private void RotateProps()
+    private void RotatePropellers()
     {
-        foreach (Transform prop in props)
+        float targetRPM = 0;
+
+        if (!droneControllerFull.GetIsHovering())
         {
-            if (prop != null)
+            targetRPM = droneControllerFull.CurrentThrottle * maxRPM;
+        }
+        else
+        {
+            targetRPM = droneControllerFull.HoveringThrottle * maxRPM;
+        }
+
+        currentRPM = Mathf.Lerp(
+            currentRPM,
+            targetRPM,
+            spinSmoothness * Time.deltaTime
+        );
+
+
+        foreach (Transform Propeller in Propellers)
+        {
+            if (Propeller != null)
             {
-                prop.Rotate(Vector3.forward, propSpeed * Time.deltaTime, Space.Self);
+                Propeller.Rotate(Vector3.forward, currentRPM * Time.deltaTime, Space.Self);
             }
         }
     }
 }
-

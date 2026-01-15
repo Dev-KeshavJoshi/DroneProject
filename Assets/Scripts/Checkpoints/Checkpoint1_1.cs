@@ -53,7 +53,7 @@ public class Checkpoint1_1 : ICheckpoint
         _context.StartCoroutine(HideSubtitleText(4f));
 
         _tutorialText.gameObject.SetActive(true);
-        _tutorialText.text = "Handle Throttle:  Space Key = Up Thrust & Left Control = Down Thrust ";
+        _tutorialText.text = "Handle Throttle:  Space Key = Up Thrust\nToggle Hovering:  Left Shift Key ";
     }
 
     public void UpdateCheckpoint()

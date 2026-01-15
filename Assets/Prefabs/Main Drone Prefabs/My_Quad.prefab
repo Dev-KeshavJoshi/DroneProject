@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7290732542878246607}
   - component: {fileID: 2769089688421951099}
   m_Layer: 0
-  m_Name: Quad [Propeller] (1)
+  m_Name: Prop_BackLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 5902761448821470120}
   - component: {fileID: 8367934667019037043}
   m_Layer: 0
-  m_Name: Quad [Propeller] (4)
+  m_Name: Prop_FrontRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -568,7 +568,7 @@ GameObject:
   - component: {fileID: 6447097410449923886}
   - component: {fileID: 5092925683883624069}
   m_Layer: 0
-  m_Name: Quad [Propeller] (3)
+  m_Name: Prop_BackRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -675,7 +675,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -23.96682, y: 3.10105, z: 11.829}
-  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7570070457536853885}
@@ -683,10 +683,10 @@ Transform:
   - {fileID: 6434156519436459892}
   - {fileID: 6012931362805861099}
   - {fileID: 4935720375782272307}
-  - {fileID: 6524265625386670810}
   - {fileID: 1073837130407215927}
-  - {fileID: 1748271242047852267}
   - {fileID: 6105413165575524369}
+  - {fileID: 6524265625386670810}
+  - {fileID: 1748271242047852267}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2365379205756479165
@@ -750,7 +750,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52bc37360e1703f4bba324ba7606ef5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DroneControllerFull
-  throttleForce: 15
+  maxThrottleForce: 20
+  throttleRampSpeed: 0.5
+  throttleDelay: 3
   moveForce: 10
   yawForce: 5
   tiltSpeed: 8
@@ -768,12 +770,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62afba4c9da714748ae55e2b4e58ede3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProperDroneAnimation
-  props:
-  - {fileID: 6524265625386670810}
-  - {fileID: 1073837130407215927}
-  - {fileID: 1748271242047852267}
-  - {fileID: 6105413165575524369}
-  propSpeed: 1500
+  Prop_FrontLeft: {fileID: 1073837130407215927}
+  Prop_FrontRight: {fileID: 6105413165575524369}
+  Prop_BackLeft: {fileID: 6524265625386670810}
+  Prop_BackRight: {fileID: 1748271242047852267}
+  maxRPM: 3500
+  spinSmoothness: 3
 --- !u!1 &7869404763674344475
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,7 +819,7 @@ GameObject:
   - component: {fileID: 2118616012442347522}
   - component: {fileID: 7137191622142936858}
   m_Layer: 0
-  m_Name: Quad [Propeller] (2)
+  m_Name: Prop_FrontLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
