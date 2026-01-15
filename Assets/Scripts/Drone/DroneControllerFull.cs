@@ -5,6 +5,9 @@ using System;
 [RequireComponent(typeof(Rigidbody))]
 public class DroneControllerFull : MonoBehaviour
 {
+    [SerializeField] private GameObject UpArrow;
+    [SerializeField] private GameObject DownArrow;
+
     [Header("Throttle Settings")]
     [SerializeField] private float maxThrottleForce = 20f;
     [SerializeField] private float throttleRampSpeed = 0.5f;
@@ -73,6 +76,8 @@ public class DroneControllerFull : MonoBehaviour
         if (!isHovering) return;
 
         rigidBody.AddForce(Vector3.up * hoverForce, ForceMode.Force);
+        UpArrow.SetActive(false);
+        DownArrow.SetActive(false);
     }
 
     private void HandleThrottleInput()
@@ -90,6 +95,8 @@ public class DroneControllerFull : MonoBehaviour
                 1f,
                 throttleRampSpeed * Time.deltaTime
             );
+            UpArrow.SetActive(true);
+            DownArrow.SetActive(false);
         }
         else
         {
@@ -99,6 +106,8 @@ public class DroneControllerFull : MonoBehaviour
                 0f,
                 spoolDownSpeed * Time.deltaTime
             );
+            UpArrow.SetActive(false);
+            DownArrow.SetActive(true);
         }
     }
 
